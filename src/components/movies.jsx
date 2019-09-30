@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { getMovies } from '../services/fakeMovieService';
 import Favorite from './common/favorite';
+import Pagination from './common/pagination';
+import Paginate from '../utils/paginate';
 
 class Movies extends Component {
 	state = {
-		movies: getMovies()
+		movies: getMovies(),
+		pageSize: 4,
+		currentPage: 1
 	};
 
 	handleDelete = movie => {
@@ -19,16 +23,15 @@ class Movies extends Component {
 		this.setState({ movies });
 	};
 
-	attachIsFavorite() {
-		const moviesWithFavorite = this.state.movies.map(m => {
-			m.isFavorite = false;
-			return m;
-		});
-		this.setState({ movies: moviesWithFavorite });
-	}
+	handlePageChange = page => {
+		this.setState({ currentPage: page });
+	};
 
 	renderMovies() {
-		const movieEls = this.state.movies.map(movie => {
+		const { movies: allMovies, pageSize, currentPage } = this.state;
+		const movies = Paginate(allMovies, currentPage, pageSize);
+
+		const movieEls = movies.map(movie => {
 			return (
 				<tr key={movie._id}>
 					<td>{movie.title}</td>
@@ -60,11 +63,12 @@ class Movies extends Component {
 	}
 
 	render() {
-		const isThereMovie = this.state.movies.length;
-		if (isThereMovie) {
+		const { movies, pageSize, currentPage } = this.state;
+		const moviesLength = movies.length;
+		if (moviesLength) {
 			return (
 				<React.Fragment>
-					<h3>Showing {this.state.movies.length} movies.</h3>
+					<h3>Showing {moviesLength} movies.</h3>
 					<table className="table">
 						<thead>
 							<tr>
@@ -78,15 +82,17 @@ class Movies extends Component {
 						</thead>
 						<tbody>{this.renderMovies()}</tbody>
 					</table>
+					<Pagination
+						itemsCount={moviesLength}
+						pageSize={pageSize}
+						currentPage={currentPage}
+						onPageChange={this.handlePageChange}
+					/>
 				</React.Fragment>
 			);
 		} else {
 			return <h3>There are no movies in the database!</h3>;
 		}
-	}
-
-	componentDidMount() {
-		this.attachIsFavorite();
 	}
 }
 
