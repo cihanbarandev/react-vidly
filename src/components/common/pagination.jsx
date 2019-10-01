@@ -3,24 +3,38 @@ import React from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
+const setClassName = (page, index, props) => {
+	const { pageSize, currentPage, currentlyDisplayedItemsCount } = props;
+	let className = 'page-item';
+	className = page === currentPage ? `${className} active` : className;
+	className =
+		currentlyDisplayedItemsCount <= pageSize && index !== 0
+			? `${className} disabled`
+			: className;
+
+	return className;
+};
+
 const Pagination = props => {
-	const { itemsCount, pageSize, currentPage, onPageChange } = props;
+	const {
+		itemsCount,
+		pageSize,
+		currentlyDisplayedItemsCount,
+		onPageChange
+	} = props;
 
 	const pagesCount = Math.ceil(itemsCount / pageSize);
 	if (pagesCount === 1) return null;
 	const pages = _.range(1, pagesCount + 1);
 
+	console.log(currentlyDisplayedItemsCount);
+
 	return (
 		<nav>
 			<ul className="pagination justify-content-center">
-				{pages.map(page => {
+				{pages.map((page, index) => {
 					return (
-						<li
-							key={page}
-							className={
-								page === currentPage ? 'page-item active' : 'page-item'
-							}
-						>
+						<li key={page} className={setClassName(page, index, props)}>
 							<a
 								className="page-link"
 								onClick={() => {
