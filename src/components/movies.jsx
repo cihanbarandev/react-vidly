@@ -11,7 +11,7 @@ class Movies extends Component {
 	state = {
 		movies: [],
 		genres: [],
-		pageSize: 4,
+		pageSize: 3,
 		currentPage: 1,
 		sortColumn: { path: 'title', order: 'asc' }
 	};
@@ -24,7 +24,12 @@ class Movies extends Component {
 
 	handleDelete = movie => {
 		let movies = this.state.movies.filter(m => m._id !== movie._id);
-		this.setState({ movies });
+
+		this.setState({ movies }, () => {
+			const pagesCount = Math.ceil(this.state.movies.length / this.state.pageSize);
+			console.log(pagesCount);
+			this.setState({ currentPage: pagesCount});
+		});
 	};
 
 	handleFavorite = movie => {
@@ -47,6 +52,7 @@ class Movies extends Component {
 	};
 
 	render() {
+		console.count('rendered');
 		const {
 			movies: allMovies,
 			pageSize,
