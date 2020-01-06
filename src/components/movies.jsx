@@ -11,7 +11,7 @@ class Movies extends Component {
 	state = {
 		movies: [],
 		genres: [],
-		pageSize: 3,
+		pageSize: 4,
 		currentPage: 1,
 		sortColumn: { path: 'title', order: 'asc' }
 	};
@@ -27,7 +27,6 @@ class Movies extends Component {
 
 		this.setState({ movies }, () => {
 			const pagesCount = Math.ceil(this.state.movies.length / this.state.pageSize);
-			console.log(pagesCount);
 			this.setState({ currentPage: pagesCount});
 		});
 	};
