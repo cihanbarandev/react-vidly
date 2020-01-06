@@ -51,13 +51,16 @@ class Movies extends Component {
 		this.setState({ sortColumn });
 	};
 
+<<<<<<< HEAD
 	render() {
 		console.count('rendered');
+=======
+	getPaginatedMovies = () => {
+>>>>>>> 7fd15339a40c851f1ce59b64456b9c1758a154af
 		const {
 			movies: allMovies,
 			pageSize,
 			currentPage,
-			genres,
 			selectedGenre,
 			sortColumn
 		} = this.state;
@@ -74,40 +77,50 @@ class Movies extends Component {
 		);
 
 		const paginatedMovies = Paginate(sortedMovies, currentPage, pageSize);
-		const allMoviesCount = allMovies.length;
-		const filteredMoviesCount = filteredMovies.length;
 
-		if (allMoviesCount) {
-			return (
-				<div className="row">
-					<div className="col-2">
-						<ListGroup
-							items={genres}
-							onItemSelect={this.handleGenreSelect}
-							selectedItem={selectedGenre}
-						/>
-					</div>
-					<div className="col-10">
-						<h3>Showing {filteredMoviesCount} movies in the database.</h3>
-						<MoviesTable
-							movies={paginatedMovies}
-							onDelete={this.handleDelete}
-							onFavorite={this.handleFavorite}
-							sortColumn={sortColumn}
-							onSort={this.handleSort}
-						></MoviesTable>
-						<Pagination
-							itemsCount={allMoviesCount}
-							pageSize={pageSize}
-							currentPage={currentPage}
-							onPageChange={this.handlePageChange}
-						/>
-					</div>
+		return { totalCount: allMovies.length, paginatedMovies };
+	};
+
+	render() {
+		const {
+			pageSize,
+			currentPage,
+			genres,
+			selectedGenre,
+			sortColumn
+		} = this.state;
+
+		const { totalCount, paginatedMovies } = this.getPaginatedMovies();
+
+		if (!totalCount) return <h3>There are no movies in the database!</h3>;
+
+		return (
+			<div className="row">
+				<div className="col-2">
+					<ListGroup
+						items={genres}
+						onItemSelect={this.handleGenreSelect}
+						selectedItem={selectedGenre}
+					/>
 				</div>
-			);
-		} else {
-			return <h3>There are no movies in the database!</h3>;
-		}
+				<div className="col-10">
+					<h3>Showing {totalCount} movies in the database.</h3>
+					<MoviesTable
+						movies={paginatedMovies}
+						onDelete={this.handleDelete}
+						onFavorite={this.handleFavorite}
+						sortColumn={sortColumn}
+						onSort={this.handleSort}
+					/>
+					<Pagination
+						itemsCount={totalCount}
+						pageSize={pageSize}
+						currentPage={currentPage}
+						onPageChange={this.handlePageChange}
+					/>
+				</div>
+			</div>
+		);
 	}
 }
 

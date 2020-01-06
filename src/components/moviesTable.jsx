@@ -1,90 +1,47 @@
 import React, { Component } from 'react';
 import Favorite from './common/favorite';
+import Table from './common/table';
 
 class MoviesTable extends Component {
-	raiseSort = path => {
-		const sortColumn = { ...this.props.sortColumn };
-		if (sortColumn.path === path) {
-			sortColumn.order = sortColumn.order === 'asc' ? 'desc' : 'asc';
-		} else {
-			sortColumn.path = path;
-			sortColumn.order = 'asc';
+	columns = [
+		{ path: 'title', label: 'Title' },
+		{ path: 'genre.name', label: 'Genre' },
+		{ path: 'numberInStock', label: 'Stock' },
+		{ path: 'dailyRentalRate', label: 'Rate' },
+		{
+			key: 'like',
+			content: movie => (
+				<Favorite
+					isFavorite={movie.isFavorite}
+					onFavorite={() => this.props.onFavorite(movie)}
+				/>
+			),
+			sortable: false
+		},
+		{
+			key: 'delete',
+			content: movie => (
+				<button
+					onClick={() => this.props.onDelete(movie)}
+					className="btn btn-danger btn-sm"
+				>
+					Delete
+				</button>
+			),
+			sortable: false
 		}
-		this.props.onSort(sortColumn);
-	};
+	];
 
 	render() {
-		const { movies, onDelete, onFavorite } = this.props;
+		const { movies, sortColumn, onSort } = this.props;
 
 		return (
-			<table className="table">
-				<thead>
-					<tr>
-						<th
-							onClick={() => {
-								this.raiseSort('title');
-							}}
-							scope="col"
-						>
-							Title
-						</th>
-						<th
-							onClick={() => {
-								this.raiseSort('genre.name');
-							}}
-							scope="col"
-						>
-							Genre
-						</th>
-						<th
-							onClick={() => {
-								this.raiseSort('numberInStock');
-							}}
-							scope="col"
-						>
-							Stock
-						</th>
-						<th
-							onClick={() => {
-								this.raiseSort('dailyRentalRate');
-							}}
-							scope="col"
-						>
-							Rate
-						</th>
-						<th scope="col"></th>
-						<th scope="col"></th>
-					</tr>
-				</thead>
-				<tbody>
-					{movies.map(movie => (
-						<tr key={movie._id}>
-							<td>{movie.title}</td>
-							<td>{movie.genre.name}</td>
-							<td>{movie.numberInStock}</td>
-							<td>{movie.dailyRentalRate}</td>
-							<td>
-								{/* favorite movie */}
-								<Favorite
-									isFavorite={movie.isFavorite}
-									onFavorite={() => {
-										onFavorite(movie);
-									}}
-								/>
-							</td>
-							<td>
-								{/* delete movie */}
-								<button
-									onClick={() => onDelete(movie)}
-									className="btn btn-danger btn-sm"
-								>
-									Delete
-								</button>
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<Table
+				data={movies}
+				columns={this.columns}
+				sortColumn={sortColumn}
+				onSort={onSort}
+			/>
 		);
 	}
 }
