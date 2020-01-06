@@ -51,12 +51,7 @@ class Movies extends Component {
 		this.setState({ sortColumn });
 	};
 
-<<<<<<< HEAD
-	render() {
-		console.count('rendered');
-=======
 	getPaginatedMovies = () => {
->>>>>>> 7fd15339a40c851f1ce59b64456b9c1758a154af
 		const {
 			movies: allMovies,
 			pageSize,
